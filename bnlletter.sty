@@ -1,0 +1,131 @@
+%%% bnlletter.sty - BNL letterhead style (for letter class)
+
+% What the user can define:
+% \building{510}  building number 
+% \address{855 Serra Street\\ Stanford University\\ Stanford, CA 94305-4115}
+% \location{Room 374}  acts as a modifier to the Standard Institutional address
+% \department{Physics}  department name
+% \telephone{phone number}  default is BNL Directory Information
+% \email{Sender's email}
+% \name{Sender's name} 
+
+% Class options:
+% color-logo: print the logo in color
+% bw-logo: print the logo in black and white, not color
+% no-logo: include no logo -- for printing on real letterhead
+% addressleft: Place your address indented to left with date, not on
+%               the left margin
+% britdate: format the address day month year, not month day, year
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{bnlletter}[2013/12/03 BNL letterhead]
+\usepackage{graphicx}
+
+%\usepackage[scaled]{helvet}
+%\renewcommand\familydefault{\sfdefault} 
+\usepackage[T1]{fontenc}
+
+\renewcommand*{\name}[1]{\def\sendersname{#1}}
+\newcommand*{\department}[1]{\def\departmentnum{#1}}
+\newcommand*{\building}[1]{\def\buildingnum{#1}}
+\renewcommand*{\telephone}[1]{\def\telephonenum{#1}}
+\newcommand*{\fax}[1]{\def\faxnum{#1}}
+\newcommand*{\email}[1]{\def\emailaddr{#1}}
+\newcommand{\subject}[1]{\def\subjecttopic{#1}}
+
+\name{Sender's Name}
+\department{Physics}
+\telephone{631 344-XXXX}
+\fax{631 344-XXXX}
+\building{XXX}
+\email{xxxxx@bnl.gov}
+
+\def\logo{  %create Logo and from address
+\null\vspace{-120pt}\begingroup{
+\centerline{}
+\hspace{-0.3in}\bnllogo 
+\vspace{-1.5in}
+\begin{center}
+\fontencoding{T1}
+% Adobe Helvetica
+\fontfamily{phv} 
+%m=Medium b=Bold bx=Bold extended sb=Semi-bold c=condensed
+\fontseries{m}
+% n=normal it=italic sl=slanted sc=caps and small caps
+\fontshape{n}
+\fontsize{7}{9}
+\selectfont 
+\departmentnum \ Department \hfill Building \buildingnum \\
+\hfill P.O. Box 5000 \\
+\hfill Upton, NY 11973-5000 \\
+\hfill Phone \telephonenum \\
+\hfill Fax \faxnum \\
+\hfill \emailaddr \\
+\centerline{} 
+\hfill managed by Brookhaven Science Associates \\
+\hfill for the U.S. Department of Energy \\
+\centerline{} 
+\hfill www.bnl.gov
+\end{center}
+}\endgroup\par}
+
+\def\completeaddress{\mbox{\@date}\\[2ex]
+                   \hbox{\vtop{\hsize=.6\textwidth
+                   \fromaddress}}}
+
+% you might want to set this default depending on your printer
+\def\bnllogo{\includegraphics[width=2.9in]{BNLlogo}}
+
+%+cm
+\DeclareOption{color-logo}{\def\bnllogo
+        {\includegraphics[width=2.9in]{BNLlogo}}}
+\DeclareOption{bw-logo}{\def\bnllogobw
+        {\includegraphics[width=2.9in]{BNLlogobw}}}
+\DeclareOption{no-logo}{\def\logo{}}
+\DeclareOption{addressleft}{\def\completeaddress{\hfill
+\parbox{\indentedwidth}{\raggedleft \mbox{\@date}\\[2ex] 
+                   \fromaddress
+}}}
+\DeclareOption{britdate}{\renewcommand*{\today}{\number\day\space
+   \ifcase\month\or
+   January\or February\or March\or April\or May\or June\or
+   July\or August\or September\or October\or November\or December\fi
+   \space\number\year}}
+
+\ProcessOptions
+
+%customization for letter format
+
+\voffset -0.4875in
+\hoffset -0.5625in
+\headheight 1.5in
+\oddsidemargin 0.5625in
+\evensidemargin 0.5625in
+\topmargin 0pt
+\headsep 0pt
+\marginparsep 0pt
+\marginparwidth 1.125in  
+\textwidth 6.375in
+
+\def\ps@headings{\def\@oddhead{\rm To \ignorespaces\toname \hfil \today
+    \hfil Page \thepage}\def\@oddfoot{}}
+
+\def\@texttop{\vskip 0pt}
+
+\def\opening#1{\logo            %Create all up to start of text
+%Font defaults for text: Time Roman 12/14
+   \fontencoding{T1}\fontfamily{ptm}\fontseries{m}\fontshape{n}\fontsize{12}{14}\selectfont 
+   \vspace{12pt}
+   \completeaddress\par
+   \thispagestyle{empty} 
+   \vspace{\parskip}
+   {\raggedright \toname \\ \toaddress 
+     \ifdefined\subjecttopic
+         {\bfseries Subject: \subjecttopic} \par
+     \else
+         \par    
+     \fi
+   }%
+   \vspace{1.25\parskip}%
+  #1\par\nobreak}
+
